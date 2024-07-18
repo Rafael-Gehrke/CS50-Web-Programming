@@ -78,7 +78,8 @@ main {
     flex-direction: row; 
     justify-content: space-between; 
     align-items: center; 
-    width: 40vw; 
+    width: 50vw;
+    max-width: 638px;    
     background-color: white; 
     margin-top: -20px; 
     margin-bottom: 30px; 
@@ -86,22 +87,16 @@ main {
     padding: 5px 10px; 
     height: 37px;     
 } 
-<<<<<<< HEAD
 
-.search-input-section:hover { 
-    outline: auto;
-}
-
-  
-=======
 .search-input-section:hover{
     box-shadow: rgba(0, 0, 0, 0.35) 0px 1px 5px;
 }
->>>>>>> 45d42bb9082ba66a0a29dc6d85f08a8c7e6db4ed
+
 .search-input { 
     border: none; 
     font-size: 20px; 
-    width: 100%;
+    width: 65vw;
+    max-width: 538px;
 } 
   
 .search-input:focus { 
@@ -112,7 +107,7 @@ main {
 .search-input-container { 
     display: flex; 
     flex-direction: row; 
-    justify-content: center; 
+    justify-content: left; 
     align-items: center; 
     width: 100%; 
 } 
@@ -137,16 +132,10 @@ main {
 .feeling-lucky-btn { 
     font-size: 1rem; 
     font-weight: 100; 
-<<<<<<< HEAD
-    background-color: rgb(248, 249, 250); 
-    border: none;
-    user-select: none;
-=======
     padding: 10px 20px; 
     background-color: rgb(248, 249, 250); 
     border: none; 
-    margin: 11px 4px;
->>>>>>> 45d42bb9082ba66a0a29dc6d85f08a8c7e6db4ed
+    user-select: none;
     border-radius: 5px;
 } 
   
@@ -158,5 +147,6 @@ main {
 } 
 
 .gsb { 
-    height: 20px; 
+    height: 20px;
+    margin-left: 10px;
 }
