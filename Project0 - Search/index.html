@@ -6,49 +6,37 @@
         <meta name=”viewport” content=”width=device-width”, initial-scale=1.0”>
     </head>
     <body>
-            <!-- Navigation Section -->
-    <nav class="site-navigation"> 
-        <div class="header-container"> 
-            <a href="#" class="nav-link"> 
-                Images 
-            </a> 
-            <a href="#" class="nav-link"> 
-                Advanced Search 
-            </a> 
-        </div> 
-    </nav> 
-    <!-- Main Content Section -->
-    <main>
-        <div class="google-logo">
-            <img id="google_logo" src="googlelogo.png" alt="Google logo">
-        </div>
-
-        <!-- Search Input Section -->
-        <section class="search-input-section"> 
-            <div class="search-input-container"> 
-                <img src= "search.png" alt="google-search-btn" class="gsb">   
-                <form action="https://www.google.com/search">
-                <input type="search" name="q"
-                       class="search-input">
-                <!--
-                    <div>
-                        <input type="submit" value="Google Search">
-                        <input type="submit" value="I'm Feeling Lucky">
-                    </div>
-                -->
-                </form>
+        <!-- Navigation Section -->
+        <nav class="site-navigation"> 
+            <div class="header-container"> 
+                <a href="#" class="nav-link"> 
+                    Images 
+                </a> 
+                <a href="#" class="nav-link"> 
+                    Advanced Search 
+                </a> 
             </div> 
-        </section> 
-  
-        <!-- Buttons Section -->
-        <section class="buttons-section"> 
-            <button class="google-search-btn"> 
-                Google Search 
-            </button> 
-            <button class="feeling-lucky-btn"> 
-                I'm Feeling Lucky 
-            </button> 
-        </section> 
-    </main> 
+        </nav> 
+        <!-- Main Content Section -->
+        <main>
+            <div class="google-logo">
+                <img id="google_logo" src="googlelogo.png" alt="Google logo">
+            </div>
+
+            <!-- Search Input Section -->
+            <section class="search-input-section"> 
+                <div class="search-input-container"> 
+                    <img src= "search.png" alt="google-search-btn" class="gsb">   
+                    <form>
+                    <input action="https://www.google.com/search" type="search" name="q" class="search-input" required>
+            </section> 
+                </div>
+            <!-- Buttons Section -->
+            <section class="buttons-section"> 
+                <input type="submit" class="google-search-btn" formaction="https://www.google.com/search" value="Google Search"> 
+                <input type="submit" class="feeling-lucky-btn" name="btnI" formaction="https://www.google.com/search" value="I'm Feeling Lucky">
+            </section> 
+            </form>
+        </main> 
     </body>
 </html>
