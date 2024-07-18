@@ -84,15 +84,20 @@ main {
     margin-bottom: 30px; 
     border-radius: 30px; 
     padding: 5px 10px; 
-    height: 37px; 
-    box-shadow: 0 4px 3px rgba(197, 197, 197, 0.3); 
+    height: 37px;     
 } 
+<<<<<<< HEAD
 
 .search-input-section:hover { 
     outline: auto;
 }
 
   
+=======
+.search-input-section:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 1px 5px;
+}
+>>>>>>> 45d42bb9082ba66a0a29dc6d85f08a8c7e6db4ed
 .search-input { 
     border: none; 
     font-size: 20px; 
@@ -132,9 +137,16 @@ main {
 .feeling-lucky-btn { 
     font-size: 1rem; 
     font-weight: 100; 
+<<<<<<< HEAD
     background-color: rgb(248, 249, 250); 
     border: none;
     user-select: none;
+=======
+    padding: 10px 20px; 
+    background-color: rgb(248, 249, 250); 
+    border: none; 
+    margin: 11px 4px;
+>>>>>>> 45d42bb9082ba66a0a29dc6d85f08a8c7e6db4ed
     border-radius: 5px;
 } 
   
