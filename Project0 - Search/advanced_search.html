@@ -8,10 +8,8 @@
     <body>
         <!-- Navigation Section -->
         <nav class="site-navigation"> 
-            <div class="header-container"> 
-                <div class="google-logo">
+            <div class="header-container-advanced"> 
                     <img id="google_logo_advanced" src="googlelogo.png" alt="Google logo">
-                </div>
                 <a href="index.html" class="nav-link"> 
                     Back to Search 
                 </a> 
@@ -19,18 +17,21 @@
         </nav> 
         <!-- Main Content Section -->
         <main>
+            <div>
+                <label>Advanced Search</label>
+                <hr>
+            </div>
 
             <!-- Search Input Section -->
-            <section class="search-input-section"> 
-                <div class="search-input-container"> 
-                    <img src= "search.png" alt="google-search-btn" class="gsb">   
+            <section> 
+                <div> 
                     <form>
                     <input action="https://www.google.com/search" type="search" name="q" class="search-input" required>
                     <input type="search" name="as_epq" class="search-input">
                     <input type="search" name="as_oq" class="search-input">
                     <input type="search" name="as_eq" class="search-input">
-            </section> 
                 </div>
+            </section> 
             <!-- Buttons Section -->
             <section class="buttons-section"> 
                 <input type="submit" class="google-search-btn" formaction="https://www.google.com/search" value="Advanced Search"> 

@@ -23,7 +23,6 @@ body {
     top: 0;
 } 
 
-
 .header-container { 
     width: 90vw;
     min-height: auto;
@@ -43,9 +42,18 @@ body {
     width: auto;
 }
 
+.header-container-advanced { 
+    width: 90vw;
+    min-height: auto;
+    height: 10vh; 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 10px 10px; 
+    align-items: center;
+    gap: 10px; 
+} 
+
 #google_logo_advanced{
-    position: absolute;
-    left: 10vw;
     display: inline-block;
     height: 24px;
     width: 74px;
