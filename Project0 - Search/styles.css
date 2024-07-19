@@ -41,7 +41,25 @@ body {
     object-fit: contain;
     object-position: center bottom;
     width: auto;
-} 
+}
+
+#google_logo_advanced{
+    position: absolute;
+    left: 10vw;
+    display: inline-block;
+    height: 24px;
+    width: 74px;
+}
+
+#image-text {
+    color: #4285f4;
+    font: 16px / 16px roboto-regular, arial, sans-serif;
+    white-space: nowrap;
+    position:absolute;
+    bottom:0;
+    right:0;
+    transform: translate(-10%, -365%); /* Adjust this to fine-tune the position */
+}
 
 .nav-link:hover { 
     text-decoration: underline; 
@@ -62,6 +80,7 @@ main {
 } 
 
 .google-logo {
+    position: relative; /* This makes the absolute positioning of the span relative to this div */
     display:flex;
     flex-direction:column;
     align-items:center;
