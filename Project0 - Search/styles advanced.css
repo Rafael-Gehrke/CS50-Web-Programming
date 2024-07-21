@@ -23,24 +23,9 @@ body {
     top: 0;
 } 
 
-.header-container { 
-    width: 90vw;
-    min-height: auto;
-    height: 10vh; 
-    display: flex; 
-    justify-content: flex-end; 
-    padding: 10px 10px; 
-    align-items: center; 
-    gap: 10px; 
+.nav-link:hover { 
+    text-decoration: underline; 
 } 
-
-#google_logo { 
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    object-position: center bottom;
-    width: auto;
-}
 
 .header-container-advanced { 
     width: 90vw;
@@ -63,46 +48,53 @@ body {
     color: #d93025;
     font-size: 20px;
     margin: 25px 35px;
+    padding-bottom: 25px;
     border-bottom: 1px solid #ebebeb;
 }
 
-#image-text {
-    color: #4285f4;
-    font: 16px / 16px roboto-regular, arial, sans-serif;
-    white-space: nowrap;
-    position:absolute;
-    bottom:0;
-    right:0;
-    transform: translate(-10%, -365%); /* Adjust this to fine-tune the position */
-}
-
-.nav-link:hover { 
-    text-decoration: underline; 
-} 
-
 /* Main section styling */
 main { 
-    padding: 10px; 
+    width: 90vw;
+    padding-left: 10px; 
     height: 80vh; 
     display: flex; 
     flex-direction: column; 
-    margin-top: 5vh;
-    justify-content: center; 
-    align-items: center; 
+    margin-top: 10vh;
+    margin-left: 35px;
     background-position: center; 
     background-repeat: no-repeat; 
-    color: #fff; 
+    vertical-align: baseline;
+
+    max-width: 1140px;
+    min-width: 200px;
+    /*
+    width: 96%;
+    margin: 40px 2% 0 45px;
+    */
 } 
 
-.google-logo {
-    position: relative; /* This makes the absolute positioning of the span relative to this div */
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    min-height: 150px;
-    height: calc(100% - 560px);
-    max-height: 290px;
-    margin-top: 10vh;
+.find-pages {
+    border: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 20px;
+    vertical-align: baseline;
+    text-decoration: none;
+    margin: 35px;
+}
+
+.advanced-form {
+    margin: 35px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+label {
+    display: inline-block;
+    width: 200px;
+    margin-right: 10px;
 }
 
 /* Search Input Section styling */
@@ -126,11 +118,22 @@ main {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 1px 5px;
 }
 
+.input-div {
+    width: calc(100% - 210px);
+    max-width: 785px;
+    min-width: 335px;
+}
+
 .search-input { 
-    border: none; 
-    font-size: 20px; 
-    width: 65vw;
+    width: calc(100% - 210px);
     max-width: 538px;
+    min-width: 300px;
+    border-radius: 1px;
+    border: 1px solid #d9d9d9;
+    border-top: 1px solid #c0c0c0;
+    font-size: 13px;
+    height: 25px;
+    padding: 1px 8px;
 } 
   
 .search-input:focus { 
@@ -151,30 +154,23 @@ main {
 } 
   
 /* Buttons Section styling */
-.buttons-section { 
-    display: flex; 
-    flex-direction: row; 
-    gap: 10px;
-    margin: 11px 4px;
-    padding: 0 16px;
-    line-height: 27px;
-    height: 36px;
-    min-width: 54px;
-} 
-  
-.google-search-btn, 
-.feeling-lucky-btn { 
+
+.google-search-btn { 
     font-size: 1rem; 
-    font-weight: 100; 
+    font-weight: 100;
     padding: 10px 20px; 
-    background-color: rgb(248, 249, 250); 
-    border: none; 
     user-select: none;
     border-radius: 5px;
+    box-shadow: none;
+    background-color: #4d90fe;
+    background-image: -webkit-linear-gradient(top, #4d90fe, #4787ed);
+    border: 1px solid #3079ed;
+    color: #fff;
+    float: right;
+    padding: 8px 20px;
 } 
   
-.google-search-btn:hover, 
-.feeling-lucky-btn:hover { 
+.google-search-btn:hover { 
     border: 1px solid rgb(214, 214, 214); 
     box-shadow: 0 2px 2px rgba(162, 162, 162, 0.3); 
     cursor: pointer;
