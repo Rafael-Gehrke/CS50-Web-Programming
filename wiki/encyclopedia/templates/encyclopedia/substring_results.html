@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Search Results
+{% endblock %}
+
+{% block body %}
+    <h1>Search Results</h1>
+    {% if substring_matches %}
+        <ul>
+            {% for entry in substring_matches %}
+            <li><a href="{% url 'entry_detail' entry %}">{{ entry }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No entries found matching "{{ query }}".</p>
+    {% endif %}
+{% endblock %}

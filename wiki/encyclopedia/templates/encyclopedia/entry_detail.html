@@ -1,0 +1,17 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ entry_name }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ entry_name }}</h1>
+
+    <p>{{ entry_content }} </p> <!--Aqui tem que ver como fazer o Markdown...-->
+
+    <ul>
+    {% for entry in entries %}
+        <li><a href="{% url 'entry_detail' entry %}">{{ entry }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
