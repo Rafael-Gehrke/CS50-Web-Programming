@@ -33,5 +33,3 @@ def search(request):
         'substring_matches': substring_matches,
         'query': query
         })
-
-
