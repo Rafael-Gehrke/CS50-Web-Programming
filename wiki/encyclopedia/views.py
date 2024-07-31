@@ -33,3 +33,6 @@ def search(request):
         'substring_matches': substring_matches,
         'query': query
         })
+
+def new_page(request):
+    return redirect('new_page')
