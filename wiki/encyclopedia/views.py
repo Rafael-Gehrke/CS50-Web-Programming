@@ -35,4 +35,4 @@ def search(request):
         })
 
 def new_page(request):
-    return redirect('new_page')
+    return render(request, "encyclopedia/new_page.html")
