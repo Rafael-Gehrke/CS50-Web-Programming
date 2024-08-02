@@ -6,14 +6,17 @@
 
 {% block body %}
     <h1>New Page</h1>
-    <form action="{% url  %}" method="post"> Ajustar a URL aqui
+    <form action="{% url 'new_page' %}" method="post">
         {% csrf_token %}
+        {{ form }}
+        <!--
         <label for="new_entry_title">New Entry Title</label>
         <input name="new_entry_title" type="text" required></input>
         <br>
         <br>
         <label for="new_entry_content">Content</label>
         <textarea name= "new_entry_content" rows="5" cols="10"></textarea>
+        -->
         <br>
         <input type="submit" value="Submit">
     </form>
