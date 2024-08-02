@@ -7,7 +7,7 @@ from django import forms
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="Title")
-    content = forms.Textarea()
+    content = forms.CharField(widget=forms.Textarea(attrs={"rows":"5"}))
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -48,7 +48,7 @@ def new_page(request):
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
             # Testar se a entry já existe!
-            if title in util.list_entries: # Entry já existe, erro! Verificar Case sensitivity??????????
+            if title in util.list_entries(): # Entry já existe, erro! Verificar Case sensitivity??????????
                 return render(request, "encyclopedia/new_page.html", {
                     "form": form
                 })
@@ -60,6 +60,9 @@ def new_page(request):
                 "form": form
             })
 
-    return render(request, "encyclopedia/new_page.html")
+    form = NewPageForm()
+    return render(request, "encyclopedia/new_page.html", {
+        "form": form 
+    })
     
     # Otherwise, the encyclopedia entry should be saved to disk, and the user should be taken to the new entry’s page.
