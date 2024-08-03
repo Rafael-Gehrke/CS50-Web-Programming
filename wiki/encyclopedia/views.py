@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from . import util
 from django.urls import reverse
 from django import forms
+from django.contrib import messages
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -48,13 +49,20 @@ def new_page(request):
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
             # Testar se a entry já existe!
-            if title in util.list_entries(): # Entry já existe, erro! Verificar Case sensitivity??????????
+            if title.lower() in [entry.lower() for entry in util.list_entries()]: # Entry já existe, erro! Verificar Case sensitivity??????????
+                messages.add_message(
+                    request,
+                    messages.WARNING,
+                    message=f'Entry "{title}" already exists',
+                )
                 return render(request, "encyclopedia/new_page.html", {
                     "form": form
                 })
             else:
+                # Otherwise, the encyclopedia entry should be saved to disk, and the user should be taken to the new entry’s page.
                 util.save_entry(title, content)
-                return HttpResponseRedirect(reverse("encyclopedia/title"))
+                return redirect("entry_detail", title)
+                #return HttpResponseRedirect(reverse("encyclopedia/title"))
         else: # ISSO???
             return render(request, "encyclopedia/new_page.html", {
                 "form": form
@@ -65,4 +73,3 @@ def new_page(request):
         "form": form 
     })
     
-    # Otherwise, the encyclopedia entry should be saved to disk, and the user should be taken to the new entry’s page.

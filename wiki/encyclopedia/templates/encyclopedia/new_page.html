@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block body %}
+
+    {% if messages %}
+
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">{{ message }}</div>
+    {% endfor %}
+
+    {% endif %}
+
     <h1>New Page</h1>
     <form action="{% url 'new_page' %}" method="post">
         {% csrf_token %}
