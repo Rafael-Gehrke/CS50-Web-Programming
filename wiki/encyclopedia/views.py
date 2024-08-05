@@ -6,6 +6,9 @@ from django.urls import reverse
 from django import forms
 from django.contrib import messages
 
+from markdown2 import Markdown
+from random import randint
+
 class NewPageForm(forms.Form):
     title = forms.CharField(label="Title")
     content = forms.CharField(widget=forms.Textarea(attrs={"rows":"5"}))
@@ -18,9 +21,8 @@ def index(request):
 def entry_detail(request, entry_name):
     entry_content = util.get_entry(entry_name)
     return render(request, 'encyclopedia/entry_detail.html', {
-       'entry_content': entry_content,
+       'entry_content': Markdown().convert(entry_content),
        'entry_name': entry_name,
-       "entries": util.list_entries()
     })
 
 def search(request):
@@ -72,4 +74,9 @@ def new_page(request):
     return render(request, "encyclopedia/new_page.html", {
         "form": form 
     })
+
+def random(request):
+    entries = util.list_entries()
+    random_entry = entries[randint(0, len(entries)-1)]
+    return redirect("entry_detail", random_entry)
     
