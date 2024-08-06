@@ -18,11 +18,11 @@ def index(request):
         "entries": util.list_entries()
     })
     
-def entry_detail(request, entry_name):
-    entry_content = util.get_entry(entry_name)
+def entry_detail(request, title):
+    entry_content = util.get_entry(title)
     return render(request, 'encyclopedia/entry_detail.html', {
        'entry_content': Markdown().convert(entry_content),
-       'entry_name': entry_name,
+       'title': title,
     })
 
 def search(request):
@@ -80,3 +80,16 @@ def random(request):
     random_entry = entries[randint(0, len(entries)-1)]
     return redirect("entry_detail", random_entry)
     
+def edit(request, title):
+    if request.method == "GET":
+        content = util.get_entry(title)
+        form = NewPageForm({"title": title, "content": content})
+        return render(request,"encyclopedia/edit.html",{"form": form, "title": title})
+
+    form = NewPageForm(request.POST)
+    if form.is_valid():
+        title = form.cleaned_data.get("title")
+        content = form.cleaned_data.get("content")
+
+        util.save_entry(title=title, content=content)
+        return redirect("entry_detail", title)
