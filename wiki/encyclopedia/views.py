@@ -88,8 +88,11 @@ def edit(request, title):
 
     form = NewPageForm(request.POST)
     if form.is_valid():
-        title = form.cleaned_data.get("title")
-        content = form.cleaned_data.get("content")
+        title = form.cleaned_data["title"]
+        content = form.cleaned_data["content"]
 
-        util.save_entry(title=title, content=content)
-        return redirect("entry_detail", title)
+    util.save_entry(title=title, content=content)
+    return redirect("entry_detail", title)
+
+    #else:
+    #    return render(request,"encyclopedia/edit.html",{"form": form, "title": title})
