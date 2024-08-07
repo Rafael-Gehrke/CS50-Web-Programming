@@ -32,11 +32,9 @@ def search(request):
     if util.get_entry(query):
         return redirect('entry_detail', query)
     # If the query does not match the name of an encyclopedia entry, the user should instead be taken to a search results page that displays a list of all encyclopedia entries that have the query as a substring. For example, if the search query were ytho, then Python should appear in the search results.
-    #substring_matches = []
     entries = util.list_entries()
     
     substring_matches = [entry for entry in entries if query in entry.lower()] # list comprehension
-    print(f"Substring matches: {substring_matches}")
     
     return render(request, 'encyclopedia/substring_results.html', {
         'substring_matches': substring_matches,
@@ -50,8 +48,7 @@ def new_page(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
-            # Testar se a entry já existe!
-            if title.lower() in [entry.lower() for entry in util.list_entries()]: # Entry já existe, erro! Verificar Case sensitivity??????????
+            if title.lower() in [entry.lower() for entry in util.list_entries()]:
                 messages.add_message(
                     request,
                     messages.WARNING,
@@ -64,12 +61,12 @@ def new_page(request):
                 # Otherwise, the encyclopedia entry should be saved to disk, and the user should be taken to the new entry’s page.
                 util.save_entry(title, content)
                 return redirect("entry_detail", title)
-                #return HttpResponseRedirect(reverse("encyclopedia/title"))
-        else: # ISSO???
+        else:
             return render(request, "encyclopedia/new_page.html", {
                 "form": form
             })
-
+        
+    # GET method -> empty form
     form = NewPageForm()
     return render(request, "encyclopedia/new_page.html", {
         "form": form 
@@ -90,9 +87,8 @@ def edit(request, title):
     if form.is_valid():
         title = form.cleaned_data["title"]
         content = form.cleaned_data["content"]
+        util.save_entry(title=title, content=content)
+        return redirect("entry_detail", title)
 
-    util.save_entry(title=title, content=content)
-    return redirect("entry_detail", title)
-
-    #else:
-    #    return render(request,"encyclopedia/edit.html",{"form": form, "title": title})
+    else:
+        return render(request,"encyclopedia/edit.html",{"form": form, "title": title})
