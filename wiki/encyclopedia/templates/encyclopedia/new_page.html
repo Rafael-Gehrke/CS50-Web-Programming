@@ -17,7 +17,10 @@
     <h1>New Page</h1>
     <form action="{% url 'new_page' %}" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.title.label_tag }}<br>
+        {{ form.title }}<br>
+        {{ form.content.label_tag }}<br>
+        {{ form.content }}<br>
         <br>
         <input type="submit" value="Submit">
     </form>
