@@ -1,0 +1,88 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Listing: {{listing.title}}</h2>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="alert {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <div class="product-card">
+        {% if user.is_authenticated and not listing.seller == request.user%}
+            {% if watchlisted %}
+                <form action="{% url 'remove_from_watchlist' listing.id %}" method="post">
+                    <input class="btn btn-danger" type="submit" value="Remove from my Watchlist.">
+                    {% csrf_token %}
+                </form>
+            {% else %}
+                <form action="{% url 'add_to_watchlist' listing.id %}" method="post">
+                    <input class="btn btn-primary" type="submit" value="Add to my Watchlist!">
+                    {% csrf_token %}
+                </form>
+            {% endif %}
+        {% endif %}    
+
+        <div class="product-image">
+            <img src={{listing.image_url}}>
+        </div>
+        <div class="product-details">
+            <p class="description">{{ listing.description }}</p>
+            <p class="price">$ {{ listing.current_bid }}</p>
+            <p>{{ bids_count }} bid(s) so far.</p>
+
+            {% if current_bidder.bidder == request.user %}
+                <div>
+                    <p>Your bid is the current bid</p>
+                </div>
+            {% endif %}
+
+            {% if listing.seller == request.user and bids_count > 0 %}
+                <p>The current bidder is: {{ current_bidder.bidder }}</p>
+            {% endif %}
+        </div>            
+    </div>
+
+    {% if user.is_authenticated and not listing.seller == request.user %}
+        <form action="{% url 'listing_detail' listing.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+            <br>
+            {{ form.new_bid }}
+            </div>
+            <input class="btn btn-primary" type="submit" value="Place Bid">
+        </form>
+    {% endif %}    
+
+    {% if listing.seller == request.user and listing.active %}
+        <form action="{% url 'close_auction' listing.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+            <br>
+            </div>
+            <input class="btn btn-danger" type="submit" value="Close Auction">
+        </form>
+    {% endif %}
+
+    {% if not listing.active %}
+        <p><strong>Auction closed.</strong></p>
+        {% if listing.winner %}
+            <p>Winner: {{ listing.winner.username }}</p>
+        {% else %}
+            <p>No bids were placed on this auction.</p>
+        {% endif %}
+    {% endif %}
+
+    <br>
+    <h3>Details</h3>
+    <ul>
+        <li>Listed by: {{listing.seller}}</li>
+        <li>Category: {{listing.category}}</li>
+    </ul>
+
+    <h3>Comments</h3>
+
+{% endblock %}
