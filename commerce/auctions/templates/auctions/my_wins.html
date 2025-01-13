@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>My Wins</h2>
+
+    {% for listing in my_wins %}
+        <div class="product-card">
+            <div class="product-image">
+                <img src={{listing.image_url}}>
+            </div>
+            <div class="product-details">
+                <h2><a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a></h2>
+                <p class="description">{{ listing.description }}</p>
+                <p class="price">$ {{ listing.current_bid }}</p>
+            </div>
+        </div>
+    {% empty %}
+    <p>No wins yet</p>
+    {% endfor %}
+
+{% endblock %}
