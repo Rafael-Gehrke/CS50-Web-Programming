@@ -98,7 +98,6 @@ def categories_index(request):
 
     return render(request, "auctions/categories_index.html", {
         "categories": categories
-        #"categories": Listings.objects.values_list('category', flat=True).distinct()
     })
 
 def category_view(request, category):
@@ -156,7 +155,7 @@ def listing_detail(request, id):
         bid_form = ListingBidForm(request.POST)
 
         # Bid must be as large as the starting bid, and greater than other bids.
-        bid_form.fields['new_bid'].min_value = listing.current_bid #Mas se não tiver nenhuma outra bid e a current for zero?
+        bid_form.fields['new_bid'].min_value = listing.current_bid
         if bid_form.is_valid():
             # Process the bid
             new_bid_value = bid_form.cleaned_data['new_bid']
@@ -195,7 +194,6 @@ def listing_detail(request, id):
                 comment_listing=listing
             )
             new_comment.save()
-
             return redirect(reverse("listing_detail", args=[listing.id]))
         
     else:
@@ -227,17 +225,13 @@ def add_to_watchlist(request, id):
     listing = get_object_or_404(Listings, id=id)
 
     # Check if the item is already in the user's watchlist
-    if Watchlist.objects.filter(user=request.user, listing=listing).exists():
-        messages.info(request, "This item is already in your watchlist.") #### AQUI VAI SER... REMOVE FROM WATCHLIST
-    else:
+    if not Watchlist.objects.filter(user=request.user, listing=listing).exists():
         Watchlist.objects.create(user=request.user, listing=listing)
         messages.success(request, "Item added to your watchlist.")
 
-    return redirect('listing_detail', id=id)  # Redirect to the item's detail page or another page
+    return redirect('listing_detail', id=id)
 
 def remove_from_watchlist(request, id):
-    print(f"Received request to remove listing {id} from watchlist")  # Debug
-
     listing = get_object_or_404(Listings, id=id)
 
     # Check if the item is already in the user's watchlist
@@ -246,10 +240,9 @@ def remove_from_watchlist(request, id):
         watchlist_entry.delete()
         messages.success(request, "Item removed from your watchlist.")
         
-    return redirect('listing_detail', id=id)  # Redirect to the item's detail page or another page
+    return redirect('listing_detail', id=id)
 
 def close_auction(request, id):
-    # Fetch the listing
     listing = get_object_or_404(Listings, id=id)
     
     # Check if the logged-in user is the creator of the listing
