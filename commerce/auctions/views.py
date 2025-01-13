@@ -1,13 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import IntegrityError
+from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import User, Listings, Bids, Watchlist
+from .models import User, Listings, Bids, Watchlist, Comments
+from .constants import CATEGORIES, CATEGORY_DICT
 
 class ListingBidForm(forms.Form):
     new_bid = forms.DecimalField(
@@ -58,22 +60,6 @@ class NewListingForm(forms.Form):
             'class': 'form-control'
         })
     )
-    CATEGORIES = [
-    ('', 'Select a category...'),
-    ('electronics', 'Electronics'),
-    ('fashion', 'Fashion'),
-    ('home_garden', 'Home & Garden'),
-    ('toys_hobbies', 'Toys & Hobbies'),
-    ('sports_outdoors', 'Sports & Outdoors'),
-    ('automotive', 'Automotive'),
-    ('health_beauty', 'Health & Beauty'),
-    ('books_movies_music', 'Books, Movies & Music'),
-    ('collectibles_antiques', 'Collectibles & Antiques'),
-    ('business_industrial', 'Business & Industrial'),
-    ('pet_supplies', 'Pet Supplies'),
-    ('real_estate', 'Real Estate'),
-    ('other', 'Other Categories'),
-    ]
     category = forms.ChoiceField(
         label="Category",
         choices=CATEGORIES,
@@ -83,9 +69,44 @@ class NewListingForm(forms.Form):
         })
     )
 
+class CommentForm(forms.Form):
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'label':'Leave a comment:',
+            'class': 'form-control',
+            'rows': 5,
+            'required': True
+        })
+    )
+
 def index(request):
     return render(request, "auctions/index.html", {
         "listings": Listings.objects.filter(active=True)
+    })
+
+def categories_index(request):
+    categories_data = Listings.objects.filter(active=True).values('category').annotate(item_count=Count('id'))
+
+    categories = [
+        {
+            "value": category['category'],
+            "name": CATEGORY_DICT.get(category['category'], "Unknown Category"),
+            "item_count": category['item_count']
+        }
+        for category in categories_data
+    ]
+
+    return render(request, "auctions/categories_index.html", {
+        "categories": categories
+        #"categories": Listings.objects.values_list('category', flat=True).distinct()
+    })
+
+def category_view(request, category):
+    category_display_name = CATEGORY_DICT.get(category, "Unknown Category")
+    listings = Listings.objects.filter(active=True, category=category)
+    return render(request, "auctions/category_view.html", {
+        "category":category_display_name,
+        "listings": listings
     })
 
 def create_listing(request):
@@ -96,7 +117,6 @@ def create_listing(request):
         starting_bid = request.POST.get("starting_bid")
         image_url = request.POST.get("image_url")
         category = request.POST.get("category")
-            # LISTAR AS CATEGORIAS EXISTENTES??
 
         # Attempt to create new listing
         try:
@@ -132,14 +152,14 @@ def listing_detail(request, id):
     except ObjectDoesNotExist:
         current_bidder = None
 
-    if (request.method == "POST"):
-        form = ListingBidForm(request.POST)
+    if (request.method == "POST" and 'place_bid' in request.POST):
+        bid_form = ListingBidForm(request.POST)
 
         # Bid must be as large as the starting bid, and greater than other bids.
-        form.fields['new_bid'].min_value = listing.current_bid #Mas se não tiver nenhuma outra bid e a current for zero?
-        if form.is_valid():
+        bid_form.fields['new_bid'].min_value = listing.current_bid #Mas se não tiver nenhuma outra bid e a current for zero?
+        if bid_form.is_valid():
             # Process the bid
-            new_bid_value = form.cleaned_data['new_bid']
+            new_bid_value = bid_form.cleaned_data['new_bid']
             # Check if new bid is higher than the previous one
             if new_bid_value <= listing.current_bid:
                 messages.error(request, "Your bid must be higher than the current bid.")
@@ -162,22 +182,45 @@ def listing_detail(request, id):
             messages.success(request, "Bid placed successfully!")
             return redirect(reverse("listing_detail", args=[listing.id]))
 
+    if (request.method == "POST" and 'add_comment' in request.POST):
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            # Process the comment
+            new_comment_content = comment_form.cleaned_data['comment']
+            
+            # Save the new comment
+            new_comment = Comments(
+                comment=new_comment_content,
+                comment_user=request.user,
+                comment_listing=listing
+            )
+            new_comment.save()
+
+            return redirect(reverse("listing_detail", args=[listing.id]))
+        
     else:
         # GET method -> empty form
-        form = ListingBidForm()
-        form.fields['new_bid'].min_value = listing.current_bid
+        bid_form = ListingBidForm()
+        bid_form.fields['new_bid'].min_value = listing.current_bid
+        category_display_name = CATEGORY_DICT.get(listing.category, "Unknown Category")
         watchlisted = False
         if request.user.is_authenticated:
             #Check user's watchlist
             if Watchlist.objects.filter(user=request.user, listing=listing).exists():
                 watchlisted = True
 
+        comments = Comments.objects.filter(comment_listing=listing)
+        comment_form = CommentForm()
+
         return render(request, 'auctions/listing_detail.html', {
-            "form": form,
+            "bid_form": bid_form,
             "listing": listing,
             "bids_count": bids_count,
             "current_bidder": current_bidder,
-            "watchlisted":watchlisted
+            "watchlisted":watchlisted,
+            "comment_form":comment_form,
+            "comments": comments,
+            "category": category_display_name
         })
 
 def add_to_watchlist(request, id):
@@ -239,6 +282,12 @@ def my_listings(request):
     my_listings = Listings.objects.filter(seller=request.user)
     return render(request, "auctions/my_listings.html",{
         "my_listings":my_listings
+    })
+
+def my_wins(request):
+    my_wins = Listings.objects.filter(winner=request.user)
+    return render(request, "auctions/my_wins.html",{
+        "my_wins":my_wins
     })
 
 def login_view(request):

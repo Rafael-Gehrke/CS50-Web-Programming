@@ -1,4 +1,6 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
+
 
 {% block body %}
     <h2>Listing: {{listing.title}}</h2>
@@ -12,17 +14,21 @@
     {% endif %}
     
     <div class="product-card">
-        {% if user.is_authenticated and not listing.seller == request.user%}
-            {% if watchlisted %}
-                <form action="{% url 'remove_from_watchlist' listing.id %}" method="post">
-                    <input class="btn btn-danger" type="submit" value="Remove from my Watchlist.">
-                    {% csrf_token %}
+        {% if user.is_authenticated and not listing.seller == request.user and listing.active %}
+        {% if watchlisted %}
+        <form action="{% url 'remove_from_watchlist' listing.id %}" method="post">
+            {% csrf_token %}
+            <button class="watchlist_button" type="submit">
+                <img src="{% static 'auctions/open_eye.png' %}" alt="Remove from Watchlist">
+            </button>
                 </form>
             {% else %}
-                <form action="{% url 'add_to_watchlist' listing.id %}" method="post">
-                    <input class="btn btn-primary" type="submit" value="Add to my Watchlist!">
-                    {% csrf_token %}
-                </form>
+            <form action="{% url 'add_to_watchlist' listing.id %}" method="post">
+            {% csrf_token %}
+            <button class="watchlist_button" type="submit">
+                <img src="{% static 'auctions/closed_eye.png' %}" alt="Add to my Watchlist!">
+            </button>
+            </form>
             {% endif %}
         {% endif %}    
 
@@ -32,9 +38,11 @@
         <div class="product-details">
             <p class="description">{{ listing.description }}</p>
             <p class="price">$ {{ listing.current_bid }}</p>
+            {% if listing.active %}
             <p>{{ bids_count }} bid(s) so far.</p>
+            {% endif %}
 
-            {% if current_bidder.bidder == request.user %}
+            {% if current_bidder.bidder == request.user and listing.active%}
                 <div>
                     <p>Your bid is the current bid</p>
                 </div>
@@ -46,14 +54,14 @@
         </div>            
     </div>
 
-    {% if user.is_authenticated and not listing.seller == request.user %}
+    {% if user.is_authenticated and not listing.seller == request.user and not current_bidder.bidder == request.user%}
         <form action="{% url 'listing_detail' listing.id %}" method="post">
             {% csrf_token %}
             <div class="form-group">
             <br>
-            {{ form.new_bid }}
+            {{ bid_form.new_bid }}
             </div>
-            <input class="btn btn-primary" type="submit" value="Place Bid">
+            <input class="btn btn-primary" type="submit" name="place_bid" value="Place Bid">
         </form>
     {% endif %}    
 
@@ -70,7 +78,8 @@
     {% if not listing.active %}
         <p><strong>Auction closed.</strong></p>
         {% if listing.winner %}
-            <p>Winner: {{ listing.winner.username }}</p>
+            <p>There were {{ bids_count }} bid(s).</p>
+            <p>Sold to {{ listing.winner.username }} for {{ listing.current_bid }} </p>
         {% else %}
             <p>No bids were placed on this auction.</p>
         {% endif %}
@@ -80,9 +89,34 @@
     <h3>Details</h3>
     <ul>
         <li>Listed by: {{listing.seller}}</li>
-        <li>Category: {{listing.category}}</li>
+        <li>Category: {{ category }}</li>
     </ul>
 
     <h3>Comments</h3>
+
+    {% for comment in comments %}
+        <div class="product-card">
+            <div>
+                <p>{{ comment.comment_user }}: {{ comment.comment }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p>Be the first to leave a comment</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'listing_detail' listing.id %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+        {{ comment_form.comment.label }}
+        {{ comment_form.comment }}
+        </div>
+        <input class="btn btn-primary" type="submit" name="add_comment" value="Comment">
+    </form>
+
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">Register</a> to leave a comment</p>
+    {% endif %}
+
 
 {% endblock %}

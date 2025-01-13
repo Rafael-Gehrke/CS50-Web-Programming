@@ -1,6 +1,41 @@
 body {
     padding: 10px;
-    font-size: xx-large;
+}
+
+.container {
+  justify-content: flex-start;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  transition: all 0.2s ease-in-out;
+}
+
+.card-title {
+  font-size: medium;
+  color: #000000;
+
+}
+.card-text {
+  font-size: medium;
+  color: #333;
+}
+
+img {
+  object-fit: scale-down; 
+  height: 300px;
+  border-radius: 8px;
+}
+
+.watchlist_button {
+  border: none; 
+  background: white;
+  padding: 0;
+}
+
+.watchlist_button img {
+  height:50px
 }
 
 /* Container for the product card */
@@ -11,24 +46,25 @@ body {
     border: 1px solid #ddd;
     padding: 20px;
     width: 100%;
-    border-radius: 8px; /* Optional: adds rounded corners */
-    background-color: #fff; /* Optional: sets a white background */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+    border-radius: 8px; 
+    background-color: #fff; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
   /* First column: Image */
 .product-image {
-    flex: 1; /* Image column takes up 1 part */
-    max-width: 30%; /* Optional: limit the width of the image container */
+    flex: 1; 
+    max-width: 30%;
+    max-height: 400px;
     display: grid;
     place-items: center;
   }
 
   .product-image img {
-
     max-width: 100%;
+    max-height: 400px;
     height: auto;
-    border-radius: 5px; /* Optional: adds rounded corners to the image */
+    border-radius: 5px;
   }
   
   /* Second column: Details */
@@ -58,4 +94,3 @@ body {
     font-size: 1.2em;
     color: #007b00; /* Optional: green color for the price */
   }
-  
