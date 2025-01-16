@@ -1,0 +1,31 @@
+textarea {
+    min-height: 400px;
+}
+
+.email {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .email-sender {
+    font-weight: bold;
+  }
+  
+  .email-subject {
+    margin-left: 20px;
+    flex-grow: 1; /* Ensures the subject takes up remaining space */
+    text-overflow: ellipsis; /* Truncates long subjects */
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .email-timestamp {
+    color: #666; /* A subtle color for timestamps */
+    font-size: 0.9em; /* Slightly smaller text for timestamps */
+    text-align: right;
+  }
