@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // By default, load the inbox
   load_mailbox('inbox');
 
+  // Disable form default
   document.querySelector('#compose-form').onsubmit = () => {
     send_email(); 
     return false;

@@ -2,6 +2,12 @@ textarea {
     min-height: 400px;
 }
 
+#email-view form {
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: middle; /* Align forms vertically */
+}
+
 .email {
     display: flex;
     justify-content: space-between;
