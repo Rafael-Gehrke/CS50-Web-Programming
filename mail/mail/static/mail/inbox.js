@@ -13,12 +13,19 @@ document.addEventListener('DOMContentLoaded', function() {
     send_email(); 
     return false;
   }
+
+  document.querySelector('#reply-form').onsubmit = () => {
+    // TODO
+    return false;
+  }
+  
+
 });
 
 function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
-  //document.querySelector('#email-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -30,7 +37,7 @@ function compose_email() {
 function load_mailbox(mailbox) { 
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
-  //document.querySelector('#email-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -58,8 +65,15 @@ function load_mailbox(mailbox) {
       };
 
       element.addEventListener('click', function() {
-        console.log('This element has been clicked!');
-        //load_email(email.id);
+        // console.log('This element has been clicked!');
+        // Check email as 'read'
+        fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              read: true
+          })
+        });
+        load_email(email.id);
       });
       document.querySelector('#emails-view').append(element);
     });
@@ -68,19 +82,37 @@ function load_mailbox(mailbox) {
 
 function load_email(id) { 
   // Show the email and hide other views
-  //document.querySelector('#email-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'block';
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   // Fetch the email
-  fetch(`/emails/${email.id}`)
+  fetch(`/emails/${id}`)
   .then(response => response.json())
   .then(email => {
     // Print email
     console.log(email);
 // ... do something else with email ...
+    document.querySelector('#email-heading').innerHTML = `
+      <p><strong>From: </strong>${email.sender}</p>
+      <p><strong>To: </strong>${email.subject}</p>
+      <p><strong>Subject: </strong>${email.subject}</p>
+      <p><strong>Timestamp: </strong>${email.timestamp}</p>
+      `;
+    document.querySelector('#email-body').innerHTML = `${email.body}`;
+
+    document.querySelector('#archive-form').onsubmit = () => {
+      archive_email(id);
+      return false;
+    }
+
+    if (email.archived === true){
+      document.querySelector('#archive').innerHTML = "Unarchive";
+    }
+    else {
+      document.querySelector('#archive').innerHTML = "Archive";
+    }
   });
 };
-
 
 function send_email() {
   const recipients = document.querySelector('#compose-recipients').value;
@@ -104,3 +136,25 @@ function send_email() {
       load_mailbox('sent');
   });
 };
+
+function archive_email(id) {
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  })
+  // Once an email has been archived or unarchived, load the user’s inbox.  
+  load_mailbox('inbox');
+}
+
+function unarchive_email(id) {
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: false
+    })
+  })
+  // Once an email has been archived or unarchived, load the user’s inbox.  
+  load_mailbox('inbox');
+}
