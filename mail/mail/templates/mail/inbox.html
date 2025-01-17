@@ -16,9 +16,11 @@
     </div>
 
     <div id="email-view">
-        <div id="email-heading"></div>
+        <div id="email-heading">
+
+        </div>
         <form id="reply-form">
-            <button class="btn btn-sm btn-outline-primary">Reply</button>
+            <button id="reply" class="btn btn-sm btn-outline-primary">Reply</button>
         </form>
         <form id="archive-form">
             <button id="archive" class="btn btn-sm btn-outline-warning">Archive</button>
@@ -40,7 +42,7 @@
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
+            <input type="submit" class="btn btn-primary" value="Send">
         </form>
     </div>
 {% endblock %}
