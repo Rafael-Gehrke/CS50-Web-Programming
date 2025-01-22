@@ -1,0 +1,114 @@
+{% extends "network/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+<h1>All Posts</h1>
+{% if user.is_authenticated %}
+<div id="new_post">
+        <h3>New Post</h3>
+        <form id="new_post_form">
+            <textarea class="form-control" id="post_content"></textarea>
+            <input type="submit" class="btn btn-primary" value="Post">
+        </form>
+    </div>
+{% endif %}
+
+<div id="root"></div>
+<script type="text/babel">
+    const PostList = () => {
+        const [posts, setPosts] = React.useState([]);
+        const [loading, setLoading] = React.useState(true);
+        const [error, setError] = React.useState(null);
+        
+        React.useEffect(() => {
+            // Fetch all posts from the backend
+            const fetchPosts = async () => {
+            try {
+                const response = await fetch("/all_posts/");
+                if (!response.ok) {
+                    throw new Error("Failed to load posts.");
+                }
+                const data = await response.json();
+                setPosts(data.posts);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+            };
+            fetchPosts();
+        }, []);
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    
+    return (
+        <div className="post-list">
+            {posts.map((post) => (
+                <div key={post.id} className="post">
+                    <h3>{post.user}</h3>
+                    <p>{post.content}</p>
+                    <p>{post.timestamp}</p>
+                    <p><strong>Likes:</strong> {post.likes}</p>
+                    <hr />
+                </div>
+            ))}
+        </div>
+    );
+    };
+    // export default PostList;
+    ReactDOM.render(<PostList />, document.getElementById("root"));
+</script>
+                
+<!-- <div id="app"></div>
+<script type="text/babel">
+    function App() {
+        
+        const [state, setState] = React.useState({
+            user: "USER",
+            content: "CONTENT",
+            timestamp: "TIME",
+            likes: 0
+        });
+        
+function loadPost() {
+    
+    setState({
+        ...state,
+        response: event.target.value
+    });
+}
+
+function renderPost() {
+    return (
+        <div id="post">
+            <p>{state.user}</p>
+            <p>{state.content}</p>
+            <p>{state.timestamp}</p>
+            <p>{state.likes}</p>
+        </div>
+    )
+}
+function renderProblem() {
+    return (
+        <div>
+            <div className={state.incorrect ? "incorrect" : ""} id="problem">
+                {state.num1} + {state.num2}
+            </div>
+            <input onKeyPress={inputKeyPress} onChange={updateResponse} autoFocus={true} value={state.response} />
+            <div>Score: {state.score}</div>
+        </div>
+    )
+}
+
+return renderPost();
+}
+
+ReactDOM.render(<App />, document.querySelector("#app"));
+</script> -->
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/script.js' %}"></script>
+{% endblock %}
