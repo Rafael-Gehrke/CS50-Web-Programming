@@ -17,8 +17,8 @@ class Like(models.Model):
     post = models.ForeignKey("Post", on_delete=models.PROTECT, related_name="likes_received")
 
 class Follower(models.Model):
-    follower = models.ForeignKey("User", on_delete=models.PROTECT, related_name="follower")
-    following = models.ForeignKey("User", on_delete=models.PROTECT, related_name="following")
+    follower = models.ForeignKey("User", on_delete=models.PROTECT, related_name="following")
+    following = models.ForeignKey("User", on_delete=models.PROTECT, related_name="followed_by")
 
 # Comments??
 
