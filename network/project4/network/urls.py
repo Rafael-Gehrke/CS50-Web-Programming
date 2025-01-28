@@ -11,10 +11,12 @@ urlpatterns = [
 
     # API Routes
     path("posts", views.new_post, name="new_post"),
-    path("all_posts/", views.load_all_posts, name="load_all_posts"),
-    path("following/", views.following_posts, name="following_posts"),
+    path("api/posts/All Posts/", views.load_all_posts, name="load_all_posts"),
+    path("api/posts/following/", views.following_posts, name="following_posts"),
+
+
     #path("<str:username>/", views.profile_page, name="profile_page"),
-    path("api/profile/<str:username>/", views.profile_api, name="profile_api"),
-    path("api/toggle_follow/<str:username>/", views.toggle_follow, name="toggle_follow"),
-    path("api/following_posts/", views.following_posts, name="following_posts")
+    #path("api/profile/<str:username>/", views.profile_api, name="profile_api"),
+    #path("api/toggle_follow/<str:username>/", views.toggle_follow, name="toggle_follow"),
+    #path("api/following_posts/", views.following_posts, name="following_posts")
 ]

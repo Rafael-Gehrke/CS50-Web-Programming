@@ -3,16 +3,18 @@
 {% load static %}
 
 {% block body %}
-<h1 id="page_heading">All Posts</h1>
+<h1 id="page-heading">All Posts</h1>
 {% if user.is_authenticated %}
-<div id="new_post">
+<div id="new-post">
         <h3>New Post</h3>
-        <form id="new_post_form">
-            <textarea class="form-control" id="post_content"></textarea>
+        <form id="new-post-form">
+            <textarea class="form-control" id="post-content"></textarea>
             <input type="submit" class="btn btn-primary" value="Post">
         </form>
     </div>
 {% endif %}
+
+<div id="page-content"></div>
 
 <div id="profile-container"></div>
 

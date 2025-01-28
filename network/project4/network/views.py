@@ -116,7 +116,6 @@ def following_posts(request):
 
     return JsonResponse({"posts": data})
 
-
 @csrf_exempt
 def toggle_follow(request, username):
     user_to_follow = get_object_or_404(User, username=username)
@@ -133,34 +132,6 @@ def toggle_follow(request, username):
         is_following = True
 
     return JsonResponse({'is_following': is_following})
-
-# def profile_page(request, username):
-#     user = User.objects.get(username=username)
-#     user_posts = Post.objects.filter(user__username=username)
-
-#     # Prepare the data for each post
-#     user_data = [
-#         {
-#             "id": user.id,
-#             "user": user.username,
-#         }
-#     ]
-#     posts_data = [
-#         {
-#             "id": post.id,
-#             "user": post.user.username,
-#             "content": post.content,
-#             "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-#             "likes": post.likes.count(),  # Assuming likes is a ManyToMany field
-#         }
-#         for post in user_posts
-#     ]
-
-#     return JsonResponse({"user": user_data, "posts": posts_data}, status=200)
-#     # else:
-    #     return JsonResponse({"error": "GET request required."}, status=400)
-
-
 
 def login_view(request):
     if request.method == "POST":
