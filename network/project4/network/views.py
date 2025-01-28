@@ -37,14 +37,6 @@ def new_post(request):
 
     return JsonResponse({"message": "Post created successfully."}, status=201)
 
-# @login_required
-# def all_posts(request):
-
-#     # Filter emails returned based on mailbox
-#     posts = Post.objects.all.order_by('-timestamp')
-#     print(posts)
-#     return JsonResponse([post.serialize() for post in posts], safe=False)
-
 def load_all_posts(request):
     if request.method == "GET":
         # Fetch all posts
@@ -117,7 +109,7 @@ def following_posts(request):
             "user": post.user.username,
             "content": post.content,
             "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "likes": post.likes,
+            "likes": post.likes.count(),
         }
         for post in posts
     ]

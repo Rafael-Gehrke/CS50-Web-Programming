@@ -10,7 +10,7 @@
         <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
         <script type="text/babel" src="{% static 'network/react.js' %}"></script>
-        <script src="{% static 'network/script.js' %}"></script>
+        <!--<script src="{% static 'network/script.js' %}"></script>-->
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -23,11 +23,14 @@
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+                  <a id="view_all" class="nav-link" href="{% url 'index' %}">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Following</a>
+                        <!--
+                            <a id="view_following" class="nav-link" href="#">Following</a>
+                        -->
+                        <button id="view_following">Following</button>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
