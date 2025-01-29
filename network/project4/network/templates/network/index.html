@@ -8,7 +8,7 @@
 <div id="new-post">
         <h3>New Post</h3>
         <form id="new-post-form">
-            <textarea class="form-control" id="post-content"></textarea>
+            <textarea required class="form-control" id="post-content"></textarea>
             <input type="submit" class="btn btn-primary" value="Post">
         </form>
     </div>
@@ -16,9 +16,14 @@
 
 <div id="page-content"></div>
 
-<div id="profile-container"></div>
-
-<div id="root"></div>
+<div id="profile-container">
+    <h1 id="profile-heading">Fulano's Profile</h1>
+    <p id="followers">Followers</p>
+    <p id="following">Following</p>
+    <p id="user-posts-heading">Fulano's Posts</p>
+    <div id="user-posts"></div>
+    <button id="follow-button">Follow</button>
+</div>
 
 {% endblock %}
 

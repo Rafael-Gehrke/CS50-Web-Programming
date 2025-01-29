@@ -62,7 +62,7 @@ def load_all_posts(request):
 def profile_api(request, username):
     user = get_object_or_404(User, username=username)
     is_following = Follower.objects.filter(follower=request.user, following=user).exists()
-    posts = list(Post.objects.filter(user=user).order_by('-timestamp').values('content', 'timestamp'))
+    posts = list(Post.objects.filter(user=user).order_by('-timestamp').values('user', 'content', 'timestamp', 'likes'))
 
     return JsonResponse({
         'username': user.username,
@@ -131,7 +131,9 @@ def toggle_follow(request, username):
     else:
         is_following = True
 
-    return JsonResponse({'is_following': is_following})
+    followers = Follower.objects.filter(following=user_to_follow).count()
+    return JsonResponse({'is_following': is_following,
+                         'followers': followers })
 
 def login_view(request):
     if request.method == "POST":
