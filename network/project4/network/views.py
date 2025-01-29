@@ -40,9 +40,17 @@ def new_post(request):
 
 def load_all_posts(request):
     if request.method == "GET":
+        # Get page number from request (default to 1)
+        page_number = request.GET.get("page", 1)
+        posts_per_page = 10
+
         # Fetch all posts
         posts = Post.objects.all().order_by('-timestamp')
 
+        # Apply pagination
+        paginator = Paginator(posts, posts_per_page)
+        page_obj = paginator.get_page(page_number)
+        
         # Prepare the data for each post
         posts_data = [
             {
@@ -52,70 +60,77 @@ def load_all_posts(request):
                 "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
                 "likes": post.likes.count()
             }
-            for post in posts
+            for post in page_obj
         ]
 
-        return JsonResponse({"posts": posts_data}, status=200)
-    else:
-        return JsonResponse({"error": "GET request required."}, status=400)
+        # Return paginated response
+        return JsonResponse({
+            "posts": posts_data,
+            "current_page": page_obj.number,
+            "total_pages": paginator.num_pages,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+        }, status=200)    
+        
+    return JsonResponse({"error": "GET request required."}, status=400)
 
 @csrf_exempt
 def profile_api(request, username):
     user = get_object_or_404(User, username=username)
     is_following = Follower.objects.filter(follower=request.user, following=user).exists()
     posts = list(Post.objects.filter(user=user).order_by('-timestamp').values('user', 'content', 'timestamp', 'likes'))
-
+    is_current_user = request.user == user
     return JsonResponse({
         'username': user.username,
         'followers': user.followed_by.count(),  # Assuming Follow model has a related_name "followed_by"
         'following': user.following.count(),  # Assuming Follow model has a related_name "following"
         'is_following': is_following,
-        'posts': posts
+        'posts': posts,
+        'is_current_user': is_current_user
     })
-
-# @csrf_exempt
-# @login_required
-# def following(request):
-    followed_by_user = Follower.objects.filter(follower=request.user)
-    posts = list(Post.objects.filter(user=followed_by_user).order_by('-timestamp'))
-
-    # Prepare the data for each post
-    posts_data = [
-        {
-            "id": post.id,
-            "user": post.user.username,
-            "content": post.content,
-            "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "likes": post.likes.count()
-        }
-        for post in posts
-    ]
-
-    return JsonResponse({"posts": posts_data}, status=200)
 
 def following_posts(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
-
-    # Get the users the current user is following
-    following_users = Follower.objects.filter(follower=request.user).values_list('following', flat=True)
-
-    # Get posts from the followed users
-    posts = Post.objects.filter(user__id__in=following_users).order_by("-timestamp")
     
-    # Serialize posts
-    data = [
-        {
-            "id": post.id,
-            "user": post.user.username,
-            "content": post.content,
-            "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "likes": post.likes.count(),
-        }
-        for post in posts
-    ]
+    if request.method == "GET":
 
-    return JsonResponse({"posts": data})
+        # Get the users the current user is following
+        following_users = Follower.objects.filter(follower=request.user).values_list('following', flat=True)
+
+        # Get posts from the followed users
+        posts = Post.objects.filter(user__id__in=following_users).order_by("-timestamp")
+
+        # Get page number from request (default to 1)
+        page_number = request.GET.get("page", 1)
+        posts_per_page = 10
+
+        # Apply pagination
+        paginator = Paginator(posts, posts_per_page)
+        page_obj = paginator.get_page(page_number)
+        
+        # Prepare the data for each post
+        posts_data = [
+            {
+                "id": post.id,
+                "user": post.user.username,
+                "content": post.content,
+                "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+                "likes": post.likes.count()
+            }
+            for post in page_obj
+        ]
+
+        # Return paginated response
+        return JsonResponse({
+            "posts": posts_data,
+            "current_page": page_obj.number,
+            "total_pages": paginator.num_pages,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+        }, status=200)
+    return JsonResponse({"error": "GET request required."}, status=400)
+    
 
 @csrf_exempt
 def toggle_follow(request, username):

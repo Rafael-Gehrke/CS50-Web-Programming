@@ -32,25 +32,28 @@ function new_post() {
     })
 }
 
-function load_posts(tab) { 
+function load_posts(tab, page = 1) { 
     // Show the posts and hide other views
     document.querySelector('#new-post').style.display = 'block';
     document.querySelector('#page-heading').style.display = 'block';
-    document.querySelector('#page-content').style.display = 'block';
+    document.querySelector('#post-container').style.display = 'block';
+    document.querySelector('#pagination-div').style.display = 'block';
     document.querySelector('#profile-container').style.display = 'none';
   
     // Show the tab name
     document.querySelector('#page-heading').innerHTML = `<h3>${tab.charAt(0).toUpperCase() + tab.slice(1)}</h3>`;
-    //document.querySelector('#page-content').innerHTML = "";
 
-    fetch(`/api/posts/${tab}`)
+    fetch(`/api/posts/${tab}?page=${page}`)
     .then(response => response.json())
-    .then(posts => {
-      // Print posts
-      console.log(posts);
+    .then(data => {
+        // Print posts
+        console.log(data);
+
+        const postContainer = document.querySelector('#post-container');
+        postContainer.innerHTML = ""; // Clear old posts
         
       // Update post HTML
-      posts.posts.forEach(post => {
+      data.posts.forEach(post => {
         const element = document.createElement('div');
         element.className = 'post';
         element.innerHTML = `
@@ -61,8 +64,30 @@ function load_posts(tab) {
             <span class="post-timestamp">${post.timestamp}</span>
             <span class="post-likes">${post.likes}</span>
           `;
-        document.querySelector('#page-content').append(element);
+        postContainer.append(element);
     });
+    // Create Bootstrap pagination
+    const paginationDiv = document.querySelector('#pagination-div');
+    paginationDiv.innerHTML = ""; // Clear previous pagination
+
+    const pagination = document.createElement('nav');
+    pagination.innerHTML = `
+        <ul class="pagination justify-content-center">
+            <li class="page-item ${data.has_previous ? "" : "disabled"}">
+                <a class="page-link" href="#" onclick="load_posts('${tab}', ${data.current_page - 1})">Previous</a>
+            </li>
+            ${Array.from({ length: data.total_pages }, (_, i) => `
+                <li class="page-item ${data.current_page === i + 1 ? "active" : ""}">
+                    <a class="page-link" href="#" onclick="load_posts('${tab}', ${i + 1})">${i + 1}</a>
+                </li>
+            `).join('')}
+            <li class="page-item ${data.has_next ? "" : "disabled"}">
+                <a class="page-link" href="#" onclick="load_posts('${tab}', ${data.current_page + 1})">Next</a>
+            </li>
+        </ul>
+    `;
+
+    paginationDiv.append(pagination);
 });
 };
 
@@ -83,9 +108,9 @@ function toggle_follow(username) {
 function profile_page(username) {
     document.querySelector('#new-post').style.display = 'none';
     document.querySelector('#page-heading').style.display = 'none';
-    document.querySelector('#page-content').style.display = 'none';
+    document.querySelector('#post-container').style.display = 'none';
+    document.querySelector('#pagination-div').style.display = 'none';
     document.querySelector('#profile-container').style.display = 'block';
-    
     document.querySelector('#user-posts').innerHTML = "";
 
     fetch(`api/profile/${username}/`)
@@ -98,7 +123,14 @@ function profile_page(username) {
         document.querySelector('#followers').innerHTML = `${data.followers} follower${data.followers === 1 ? "" : "s"}`;
         document.querySelector('#following').innerHTML = `${data.following} following`;
         document.querySelector('#user-posts-heading').innerHTML = `${data.username}'s Posts`;
-        const follow_button = document.querySelector('#follow-button')
+        const follow_button = document.querySelector('#follow-button');
+        // Follow button is hidden on the user's own profile
+        if (data.is_current_user === true) {
+            follow_button.style.display = 'none';
+        }
+        else {
+            follow_button.style.display = 'block';
+        }
         follow_button.onclick = () => toggle_follow(data.username);
         follow_button.innerHTML = data.is_following ? "Unfollow":"Follow"; 
 
