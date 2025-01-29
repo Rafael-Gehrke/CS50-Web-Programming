@@ -41,14 +41,14 @@ function load_posts(tab) {
   
     // Show the tab name
     document.querySelector('#page-heading').innerHTML = `<h3>${tab.charAt(0).toUpperCase() + tab.slice(1)}</h3>`;
-    document.querySelector('#page-content').innerHTML = "";
+    //document.querySelector('#page-content').innerHTML = "";
 
     fetch(`/api/posts/${tab}`)
     .then(response => response.json())
     .then(posts => {
       // Print posts
       console.log(posts);
-  
+        
       // Update post HTML
       posts.posts.forEach(post => {
         const element = document.createElement('div');
