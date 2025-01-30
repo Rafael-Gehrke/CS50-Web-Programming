@@ -12,11 +12,12 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 
 
-from .models import User, Post, Follower
+from .models import User, Post, Follower, Like
 
 def index(request):
     # GET
     return render(request, "network/index.html")
+
 
 @csrf_exempt
 @login_required
@@ -37,6 +38,7 @@ def new_post(request):
     post.save()
 
     return JsonResponse({"message": "Post created successfully."}, status=201)
+
 
 def load_all_posts(request):
     if request.method == "GET":
@@ -74,12 +76,17 @@ def load_all_posts(request):
         
     return JsonResponse({"error": "GET request required."}, status=400)
 
+
 @csrf_exempt
 def profile_api(request, username):
     user = get_object_or_404(User, username=username)
     is_following = Follower.objects.filter(follower=request.user, following=user).exists()
-    posts = list(Post.objects.filter(user=user).order_by('-timestamp').values('user', 'content', 'timestamp', 'likes'))
+    posts = list(Post.objects.filter(user=user).order_by('-timestamp').values('user__username', 'content', 'timestamp', 'likes'))
     is_current_user = request.user == user
+    # Format timestamps in Python
+    for post in posts:
+        post["timestamp"] = post["timestamp"].strftime("%B %d, %Y, %I:%M %p")
+
     return JsonResponse({
         'username': user.username,
         'followers': user.followed_by.count(),  # Assuming Follow model has a related_name "followed_by"
@@ -88,6 +95,7 @@ def profile_api(request, username):
         'posts': posts,
         'is_current_user': is_current_user
     })
+
 
 def following_posts(request):
     if not request.user.is_authenticated:
@@ -150,6 +158,52 @@ def toggle_follow(request, username):
     followers = Follower.objects.filter(following=user_to_follow).count()
     return JsonResponse({'is_following': is_following,
                          'followers': followers })
+
+
+@csrf_exempt
+def toggle_like(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    current_user = request.user
+
+    like, liked = Like.objects.get_or_create(user=current_user, post=post)
+    if not liked:
+        like.delete()
+        liked = False
+    else:
+        liked = True
+
+    likes = Like.objects.filter(post=post).count()
+    return JsonResponse({'liked': liked,
+                         'likes': likes })
+
+@csrf_exempt
+@login_required
+def edit_post(request, post_id):
+    # Allow a user to edit their own post.
+    try:
+        post = Post.objects.get(id=post_id)
+        
+        # Ensure the user owns the post
+        if post.user != request.user:
+            return JsonResponse({"error": "You can only edit your own posts."}, status=403)
+        
+        # Handle POST request with updated content
+        if request.method == "PUT":
+            data = json.loads(request.body)
+            new_content = data.get("content", "").strip()
+
+            if not new_content:
+                return JsonResponse({"error": "Content cannot be empty."}, status=400)
+
+            post.content = new_content
+            post.save()
+
+            return JsonResponse({"message": "Post updated successfully.", "content": post.content}, status=200)
+
+        return JsonResponse({"error": "PUT request required."}, status=400)
+
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
 
 def login_view(request):
     if request.method == "POST":
