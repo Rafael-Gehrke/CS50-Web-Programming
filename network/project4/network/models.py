@@ -9,8 +9,9 @@ class Post(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="posts")
     content = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
-
+    
+    def like_count(self):
+        return self.likes_received.count()
 
 class Like(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="likes_sent")

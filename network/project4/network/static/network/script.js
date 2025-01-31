@@ -69,7 +69,7 @@ function load_posts(tab, page = 1) {
             <a href="#" onclick="profile_page('${post.user}')"><strong>${post.user}</strong></a>
             </span>
             <span class="post-content">${post.content}</span>
-            <button class="like-button">Like</button>
+            <button class="like-button">${post.is_liked_by_current_user === true ?"Unlike": "Like"}</button>
             ${post.user === current_user ? `<button class="edit-button">Edit</button>` : ""}
             <span class="post-timestamp">${post.timestamp}</span>
             <span class="post-likes">${post.likes}</span>
@@ -82,7 +82,7 @@ function load_posts(tab, page = 1) {
             // Add event listener for like button
             const likeButton = element.querySelector(".like-button");
             if (likeButton) {
-                likeButton.addEventListener("click", () => toggle_like(post.id));
+                likeButton.addEventListener("click", () => toggle_like(element, post.id));
             }
         postContainer.append(element);
     });
@@ -126,17 +126,16 @@ function toggle_follow(username) {
         .catch((error) => console.error("Error toggling follow:", error));
 };
 
-function toggle_like(post_id) {
+function toggle_like(element, post_id) {
     fetch(`/api/toggle_like/${post_id}/`, {
         method: "POST",
         //headers: { "X-CSRFToken": getCSRFToken(), "Content-Type": "application/json" },
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log('like like likeeee');
-            //is_following = data.is_following;
-            //document.querySelector('#follow-button').innerHTML = data.is_following ? "Unfollow":"Follow"; 
-            //document.querySelector('#followers').innerHTML = `${data.followers} follower${data.followers === 1 ? "" : "s"}`;
+            console.log(data);
+            element.querySelector('.post-likes').innerHTML = data.likes;
+            element.querySelector('.like-button').innerHTML = data.liked ? "Unlike":"Like";
         })
         .catch((error) => console.error("Error toggling follow:", error));
 };

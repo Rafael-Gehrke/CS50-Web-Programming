@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -54,13 +55,16 @@ def load_all_posts(request):
         page_obj = paginator.get_page(page_number)
         
         # Prepare the data for each post
+        current_user = request.user if request.user.is_authenticated else None
+
         posts_data = [
             {
                 "id": post.id,
                 "user": post.user.username,
                 "content": post.content,
                 "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-                "likes": post.likes.count()
+                "likes": post.like_count(),
+                "is_liked_by_current_user": Like.objects.filter(user=current_user, post=post).exists(),
             }
             for post in page_obj
         ]
@@ -81,18 +85,28 @@ def load_all_posts(request):
 def profile_api(request, username):
     user = get_object_or_404(User, username=username)
     is_following = Follower.objects.filter(follower=request.user, following=user).exists()
-    posts = list(Post.objects.filter(user=user).order_by('-timestamp').values('user__username', 'content', 'timestamp', 'likes'))
+    posts = Post.objects.filter(user=user).order_by('-timestamp').annotate(
+        likes_count=Count('likes_received'),  # Count likes per post
+        liked_by_user=Exists(Like.objects.filter(user=request.user, post=OuterRef('id')))  # Check if current user liked the post
+    ).values('user__username', 'content', 'timestamp', 'likes_count', 'liked_by_user')    
     is_current_user = request.user == user
-    # Format timestamps in Python
-    for post in posts:
-        post["timestamp"] = post["timestamp"].strftime("%B %d, %Y, %I:%M %p")
+
+   # Convert QuerySet to a list and format timestamps
+    posts_list = [
+        {
+            **post,
+            "timestamp": post["timestamp"].strftime("%B %d, %Y, %I:%M %p"),
+            "liked_by_user": bool(post["liked_by_user"]),  # Ensure boolean serialization
+        }
+        for post in posts
+    ]
 
     return JsonResponse({
         'username': user.username,
-        'followers': user.followed_by.count(),  # Assuming Follow model has a related_name "followed_by"
-        'following': user.following.count(),  # Assuming Follow model has a related_name "following"
+        'followers': user.followed_by.count(),
+        'following': user.following.count(),
         'is_following': is_following,
-        'posts': posts,
+        'posts': posts_list,
         'is_current_user': is_current_user
     })
 
@@ -118,13 +132,16 @@ def following_posts(request):
         page_obj = paginator.get_page(page_number)
         
         # Prepare the data for each post
+        current_user = request.user if request.user.is_authenticated else None
+
         posts_data = [
             {
                 "id": post.id,
                 "user": post.user.username,
                 "content": post.content,
                 "timestamp": post.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-                "likes": post.likes.count()
+                "likes": post.like_count(),
+                "is_liked_by_current_user": Like.objects.filter(user=current_user, post=post).exists()
             }
             for post in page_obj
         ]
@@ -174,7 +191,7 @@ def toggle_like(request, post_id):
 
     likes = Like.objects.filter(post=post).count()
     return JsonResponse({'liked': liked,
-                         'likes': likes })
+                         'likes': likes})
 
 @csrf_exempt
 @login_required

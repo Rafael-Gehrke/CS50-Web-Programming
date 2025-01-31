@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, Follower
+from .models import Post, Follower, Like
 
 # Register your models here.
 
@@ -11,3 +11,7 @@ class ListingAdmin(admin.ModelAdmin):
 @admin.register(Follower)
 class ListingAdmin(admin.ModelAdmin):
     list_display = ('follower', 'following')
+
+@admin.register(Like)
+class ListingAdmin(admin.ModelAdmin):
+    list_display = ('user', 'post')
