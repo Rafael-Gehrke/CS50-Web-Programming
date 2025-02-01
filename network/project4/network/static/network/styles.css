@@ -1,5 +1,23 @@
+@keyframes explode {
+  from {
+    background-color: gray;
+  }
+  to {
+    background-color: red;
+  }
+}
+
 textarea {
     min-height: 100px;
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+  animation-name: explode;
+  animation-duration: 2s;
+  animation-play-state: paused;
+  /* fill: gray; */
 }
 
 .post {
