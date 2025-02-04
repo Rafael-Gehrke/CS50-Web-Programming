@@ -72,7 +72,7 @@ function load_posts(tab, page = 1) {
             <button class="like-button1">${post.is_liked_by_current_user === true ?"Unlike": "Like"}</button>
 
             <button class="like-button2">
-                <svg id="heart-icon" viewBox="0 0 471.701 471.701">
+                <svg id="heart-icon" ${post.is_liked_by_current_user === true ? "class=liked": ""} viewBox="0 0 471.701 471.701">
                     <g>
                         <path d="M433.601,67.001c-24.7-24.7-57.4-38.2-92.3-38.2s-67.7,13.6-92.4,38.3l-12.9,12.9l-13.1-13.1
                             c-24.7-24.7-57.6-38.4-92.5-38.4c-34.8,0-67.6,13.6-92.2,38.2c-24.7,24.7-38.3,57.5-38.2,92.4c0,34.9,13.7,67.6,38.4,92.3
@@ -84,11 +84,10 @@ function load_posts(tab, page = 1) {
                     </g>
                 </svg>
             </button>
-            
+            <span class="post-likes">${post.likes}</span>
 
             ${post.user === current_user ? `<button class="edit-button">Edit</button>` : ""}
             <span class="post-timestamp">${post.timestamp}</span>
-            <span class="post-likes">${post.likes}</span>
         `;
             // Add event listener for edit button (if present)
             const editButton = element.querySelector(".edit-button");
@@ -156,7 +155,7 @@ function toggle_like(element, post_id) {
 
 
             const heart = element.querySelector('#heart-icon');
-            heart.classList.toggle('active');
+            heart.classList.toggle('liked');
         })
         .catch((error) => console.error("Error toggling follow:", error));
 };
