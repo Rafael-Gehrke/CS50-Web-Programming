@@ -19,7 +19,6 @@ def index(request):
     # GET
     return render(request, "network/index.html")
 
-
 @csrf_exempt
 @login_required
 def new_post(request):
@@ -110,7 +109,6 @@ def profile_api(request, username):
         'is_current_user': is_current_user
     })
 
-
 def following_posts(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
@@ -156,7 +154,6 @@ def following_posts(request):
         }, status=200)
     return JsonResponse({"error": "GET request required."}, status=400)
     
-
 @csrf_exempt
 def toggle_follow(request, username):
     user_to_follow = get_object_or_404(User, username=username)
@@ -175,7 +172,6 @@ def toggle_follow(request, username):
     followers = Follower.objects.filter(following=user_to_follow).count()
     return JsonResponse({'is_following': is_following,
                          'followers': followers })
-
 
 @csrf_exempt
 def toggle_like(request, post_id):
@@ -241,11 +237,9 @@ def login_view(request):
     else:
         return render(request, "network/login.html")
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
