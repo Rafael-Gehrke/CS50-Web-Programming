@@ -1,23 +1,32 @@
-@keyframes explode {
-  from {
-    background-color: gray;
-  }
-  to {
-    background-color: red;
-  }
-}
-
-textarea {
-    min-height: 100px;
+@keyframes pulse {
+  0% { transform: scale(1); fill: gray; }
+  50% { transform: scale(2); fill: red; }
+  100% { transform: scale(1.5); fill: red; }
 }
 
 svg {
   width: 20px;
   height: 20px;
-  animation-name: explode;
-  animation-duration: 2s;
-  animation-play-state: paused;
-  /* fill: gray; */
+  /* transition: transform 0.3s ease-in-out, fill 0.3s ease-in-out; */
+  fill: gray;
+}
+
+/* Apply animation when active */
+.active {
+  animation: pulse 1s ease-in-out;
+  animation-fill-mode: forwards;
+  fill: red;
+}
+
+button {
+  border: 10px;  
+  background: none; 
+  padding: none;
+  cursor: pointer;
+}
+
+textarea {
+    min-height: 100px;
 }
 
 .post {
