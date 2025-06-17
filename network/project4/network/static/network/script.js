@@ -1,18 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('#new-post-form').onsubmit = () => {
-        new_post(); 
-        return false;
+    const newPostForm = document.querySelector('#new-post-form');
+    if (newPostForm) {
+        newPostForm.onsubmit = () => {
+            new_post(); 
+            return false;
+        }
     }
 
     document.querySelector('#view_all').addEventListener('click', (event) => {
         event.preventDefault();
         load_posts('All Posts')});
-    document.querySelector('#view_following').addEventListener('click', () => load_posts('following'));
-
-    document.querySelector('#current_user').addEventListener('click', () => {
-        const username = document.querySelector("#current_user").getAttribute("data-username");
-        profile_page(username);
-    });
+    const viewFollowing = document.querySelector('#view_following');
+    if (viewFollowing) {
+        viewFollowing.addEventListener('click', () => load_posts('following'));
+    }
+    
+    const current_user = document.querySelector("#current_user");
+    console.log(current_user);
+    if (current_user) {
+        current_user.addEventListener('click', () => {
+            const username = document.querySelector("#current_user").getAttribute("data-username");
+            profile_page(username);
+        });
+    };
 
     // By default, load all posts
     load_posts('All Posts');
@@ -39,7 +49,10 @@ function new_post() {
 
 function load_posts(tab, page = 1) { 
     // Show the posts and hide other views
-    document.querySelector('#new-post').style.display = 'block';
+    const newPost = document.querySelector('#new-post');
+    if (newPost) {
+        newPost.style.display = 'block';
+    }
     document.querySelector('#page-heading').style.display = 'block';
     document.querySelector('#post-container').style.display = 'block';
     document.querySelector('#pagination-div').style.display = 'block';
@@ -62,7 +75,11 @@ function load_posts(tab, page = 1) {
         const element = document.createElement('div');
         element.className = 'post';
         element.dataset.postId = post.id;
-        const current_user = document.querySelector("#current_user").getAttribute("data-username");
+
+        const current_user = document.querySelector("#current_user")
+        if (current_user){
+            current_user.getAttribute("data-username");
+        }
 
         element.innerHTML = `
             <header class="post-header">

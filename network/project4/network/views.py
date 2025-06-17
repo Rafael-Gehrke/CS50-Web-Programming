@@ -109,6 +109,7 @@ def profile_api(request, username):
         'is_current_user': is_current_user
     })
 
+@login_required
 def following_posts(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
@@ -155,6 +156,7 @@ def following_posts(request):
     return JsonResponse({"error": "GET request required."}, status=400)
     
 @csrf_exempt
+@login_required
 def toggle_follow(request, username):
     user_to_follow = get_object_or_404(User, username=username)
     current_user = request.user
@@ -174,6 +176,7 @@ def toggle_follow(request, username):
                          'followers': followers })
 
 @csrf_exempt
+@login_required
 def toggle_like(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     current_user = request.user
